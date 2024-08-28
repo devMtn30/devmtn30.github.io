@@ -13,6 +13,8 @@
             margin: 0;
             background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
             font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            touch-action: none;  /* Prevent scrolling */
         }
         .container {
             position: relative;
@@ -91,7 +93,15 @@
             const score = calculateScore(points);
             scoreDisplay.textContent = score.toFixed(2);
         };
+
+        const preventDefault = (e) => {
+            e.preventDefault();
+        };
         
+        document.addEventListener('touchstart', preventDefault, { passive: false });
+        document.addEventListener('touchmove', preventDefault, { passive: false });
+        document.addEventListener('touchend', preventDefault, { passive: false });
+
         canvas.addEventListener('mousedown', (e) => {
             startDrawing(getMousePos(canvas, e));
         });
@@ -104,23 +114,18 @@
         });
         
         canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
             let touch = e.touches[0];
             startDrawing(getTouchPos(canvas, touch));
-        }, { passive: false });
+        });
         
-        canvas.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            stopDrawing();
-        }, { passive: false });
+        canvas.addEventListener('touchend', stopDrawing);
         
         canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
             if (!drawing) return;
             let touch = e.touches[0];
             draw(getTouchPos(canvas, touch));
-        }, { passive: false });
-
+        });
+        
         function calculateScore(points) {
             if (points.length < 2) return 0;
             const xMean = points.reduce((sum, point) => sum + point.x, 0) / points.length;
