@@ -104,18 +104,23 @@
         });
         
         canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
             let touch = e.touches[0];
             startDrawing(getTouchPos(canvas, touch));
-        }, { passive: true });
+        }, { passive: false });
         
-        canvas.addEventListener('touchend', stopDrawing);
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            stopDrawing();
+        }, { passive: false });
         
         canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
             if (!drawing) return;
             let touch = e.touches[0];
             draw(getTouchPos(canvas, touch));
-        }, { passive: true });
-        
+        }, { passive: false });
+
         function calculateScore(points) {
             if (points.length < 2) return 0;
             const xMean = points.reduce((sum, point) => sum + point.x, 0) / points.length;
